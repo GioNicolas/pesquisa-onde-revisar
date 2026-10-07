@@ -1,0 +1,1002 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Caderno de Estudo — Pesquisa: Onde Revisar Primeiro</title>
+<style>
+  :root {
+    --bg-page: #f8fafc;
+    --bg-surface: #ffffff;
+    --bg-subtle: #f1f5f9;
+    --border: #e2e8f0;
+    --border-strong: #cbd5e1;
+    --text-main: #0f172a;
+    --text-muted: #475569;
+    --text-light: #64748b;
+    --accent: #2563eb;
+    --accent-bg: #eff6ff;
+    --success: #15803d;
+    --success-bg: #f0fdf4;
+    --danger: #b91c1c;
+    --danger-bg: #fef2f2;
+    --warn: #b45309;
+    --warn-bg: #fffbeb;
+    --code-bg: #f8fafc;
+    --card-shadow: 0 1px 3px rgba(0,0,0,0.05), 0 1px 2px rgba(0,0,0,0.03);
+    --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  }
+
+  [data-theme="dark"] {
+    --bg-page: #0b0f19;
+    --bg-surface: #111827;
+    --bg-subtle: #1f2937;
+    --border: #2e384d;
+    --border-strong: #475569;
+    --text-main: #f8fafc;
+    --text-muted: #cbd5e1;
+    --text-light: #94a3b8;
+    --accent: #60a5fa;
+    --accent-bg: rgba(96, 165, 250, 0.1);
+    --success: #4ade80;
+    --success-bg: rgba(74, 222, 128, 0.1);
+    --danger: #f87171;
+    --danger-bg: rgba(248, 113, 113, 0.1);
+    --warn: #fbbf24;
+    --warn-bg: rgba(251, 191, 36, 0.1);
+    --code-bg: #0d1322;
+    --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: var(--font-sans);
+    background-color: var(--bg-page);
+    color: var(--text-main);
+    line-height: 1.7;
+    font-size: 16px;
+    display: flex;
+    min-height: 100vh;
+    transition: background-color 0.2s, color 0.2s;
+  }
+
+  /* Sidebar */
+  aside.sidebar {
+    width: 280px;
+    background: var(--bg-surface);
+    border-right: 1px solid var(--border);
+    padding: 1.8rem 1.2rem;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    flex-shrink: 0;
+  }
+
+  .sidebar-header {
+    margin-bottom: 1.8rem;
+  }
+  .project-tag {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+    margin-bottom: 0.3rem;
+  }
+  .project-title {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--text-main);
+    line-height: 1.3;
+  }
+
+  .theme-toggle-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: var(--bg-subtle);
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    padding: 0.4rem 0.8rem;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    margin-top: 0.8rem;
+    width: 100%;
+    justify-content: center;
+    font-weight: 500;
+  }
+  .theme-toggle-btn:hover {
+    color: var(--text-main);
+    border-color: var(--border-strong);
+  }
+
+  nav.nav-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    margin-top: 1rem;
+  }
+  .nav-item {
+    padding: 0.65rem 0.85rem;
+    border-radius: 6px;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    transition: all 0.15s;
+    border: 1px solid transparent;
+  }
+  .nav-item:hover {
+    background: var(--bg-subtle);
+    color: var(--text-main);
+  }
+  .nav-item.active {
+    background: var(--accent-bg);
+    color: var(--accent);
+    border-color: var(--border);
+    font-weight: 600;
+  }
+  .nav-num {
+    font-size: 0.8rem;
+    font-weight: 700;
+    opacity: 0.7;
+  }
+
+  /* Main Reader Area */
+  main.main-reader {
+    flex: 1;
+    padding: 3rem 4rem;
+    max-width: 900px;
+    overflow-y: auto;
+  }
+
+  section.module {
+    display: none;
+    animation: simpleFade 0.2s ease-in;
+  }
+  section.module.active {
+    display: block;
+  }
+
+  @keyframes simpleFade {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  .module-meta {
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--accent);
+    margin-bottom: 0.5rem;
+  }
+  h1.module-heading {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--text-main);
+    line-height: 1.25;
+    margin-bottom: 0.8rem;
+  }
+  p.module-intro {
+    font-size: 1.1rem;
+    color: var(--text-muted);
+    margin-bottom: 2rem;
+    line-height: 1.6;
+  }
+
+  /* Content Cards & Boxes */
+  .box {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.6rem;
+    margin-bottom: 1.8rem;
+    box-shadow: var(--card-shadow);
+  }
+  .box h2, .box h3 {
+    font-size: 1.25rem;
+    color: var(--text-main);
+    margin-bottom: 0.8rem;
+    font-weight: 700;
+  }
+
+  .note {
+    padding: 1rem 1.2rem;
+    border-radius: 6px;
+    border-left: 4px solid var(--accent);
+    background: var(--accent-bg);
+    margin: 1.2rem 0;
+    font-size: 0.95rem;
+    color: var(--text-main);
+  }
+  .note strong { color: var(--accent); }
+
+  .note-warning {
+    border-left-color: var(--warn);
+    background: var(--warn-bg);
+  }
+  .note-warning strong { color: var(--warn); }
+
+  .note-success {
+    border-left-color: var(--success);
+    background: var(--success-bg);
+  }
+  .note-success strong { color: var(--success); }
+
+  /* Diff Dissector */
+  .diff-container {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    overflow-x: auto;
+    margin: 1.2rem 0;
+  }
+  .diff-row {
+    padding: 0.35rem 0.9rem;
+    cursor: pointer;
+    display: flex;
+    gap: 1.2rem;
+    border-left: 3px solid transparent;
+    user-select: none;
+  }
+  .diff-row:hover {
+    background: var(--bg-subtle);
+  }
+  .diff-row.active {
+    background: var(--accent-bg) !important;
+    border-left-color: var(--accent);
+  }
+  .diff-hunk-header { color: var(--accent); font-weight: 600; background: var(--bg-subtle); }
+  .diff-add { color: var(--success); background: var(--success-bg); }
+  .diff-del { color: var(--danger); background: var(--danger-bg); }
+  .diff-ctx { color: var(--text-light); }
+
+  .diff-info-panel {
+    background: var(--bg-subtle);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 1.2rem;
+    font-size: 0.95rem;
+    min-height: 70px;
+    margin-top: 1rem;
+  }
+
+  /* Clean Slider Component */
+  .slider-wrapper {
+    background: var(--bg-subtle);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+  }
+  .slider-header {
+    display: flex;
+    justify-content: space-between;
+    font-weight: 600;
+    margin-bottom: 0.8rem;
+  }
+  input[type="range"] {
+    width: 100%;
+    accent-color: var(--accent);
+    height: 6px;
+    border-radius: 3px;
+    cursor: pointer;
+  }
+  .clean-metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-top: 1.2rem;
+  }
+  .clean-metric-card {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 1rem;
+    text-align: center;
+  }
+  .clean-metric-card.winner {
+    border-color: var(--accent);
+    background: var(--accent-bg);
+  }
+  .clean-metric-label { font-size: 0.8rem; color: var(--text-light); font-weight: 500; }
+  .clean-metric-number { font-size: 1.8rem; font-weight: 800; color: var(--text-main); margin: 0.3rem 0; }
+  .clean-metric-card.winner .clean-metric-number { color: var(--accent); }
+
+  /* Clean Flashcard Accordion */
+  .accordion-item {
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    margin-bottom: 0.8rem;
+    background: var(--bg-surface);
+    overflow: hidden;
+  }
+  .accordion-trigger {
+    padding: 1rem 1.2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    font-weight: 600;
+    color: var(--text-main);
+  }
+  .accordion-trigger:hover {
+    background: var(--bg-subtle);
+  }
+  .accordion-body {
+    display: none;
+    padding: 1.2rem;
+    border-top: 1px solid var(--border);
+    background: var(--bg-page);
+    font-size: 0.95rem;
+    line-height: 1.65;
+    color: var(--text-muted);
+  }
+  .accordion-item.open .accordion-body { display: block; }
+  .accordion-indicator { font-size: 0.8rem; color: var(--text-light); }
+
+  /* Clean Quiz */
+  .quiz-box {
+    margin-top: 1.5rem;
+  }
+  .quiz-btn {
+    width: 100%;
+    text-align: left;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    padding: 0.9rem 1.2rem;
+    border-radius: 6px;
+    margin-bottom: 0.6rem;
+    cursor: pointer;
+    font-size: 0.92rem;
+    color: var(--text-main);
+    transition: all 0.15s;
+  }
+  .quiz-btn:hover {
+    border-color: var(--accent);
+    background: var(--bg-subtle);
+  }
+  .quiz-btn.correct {
+    border-color: var(--success) !important;
+    background: var(--success-bg) !important;
+    color: var(--success);
+    font-weight: 600;
+  }
+  .quiz-btn.wrong {
+    border-color: var(--danger) !important;
+    background: var(--danger-bg) !important;
+    color: var(--danger);
+  }
+  .quiz-result-msg {
+    padding: 1rem;
+    border-radius: 6px;
+    margin-top: 1rem;
+    display: none;
+    font-size: 0.92rem;
+  }
+
+  /* Page Footer Nav */
+  .footer-nav {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+  }
+  .nav-btn {
+    padding: 0.65rem 1.3rem;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    border: 1px solid var(--border);
+    background: var(--bg-surface);
+    color: var(--text-main);
+  }
+  .nav-btn:hover { background: var(--bg-subtle); }
+  .nav-btn-primary {
+    background: var(--accent);
+    color: #ffffff;
+    border-color: var(--accent);
+  }
+  .nav-btn-primary:hover { opacity: 0.9; background: var(--accent); }
+
+  /* Tables */
+  table.clean-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1.2rem 0;
+    font-size: 0.9rem;
+  }
+  table.clean-table th, table.clean-table td {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--border);
+    text-align: left;
+  }
+  table.clean-table th {
+    font-weight: 600;
+    color: var(--text-light);
+    background: var(--bg-subtle);
+  }
+
+  @media (max-width: 800px) {
+    body { flex-direction: column; }
+    aside.sidebar { width: 100%; height: auto; position: static; }
+    main.main-reader { padding: 1.5rem; }
+    .clean-metrics-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div>
+    <div class="sidebar-header">
+      <div class="project-tag">Guia de Estudo</div>
+      <div class="project-title">Onde Revisar Primeiro</div>
+      <button class="theme-toggle-btn" onclick="toggleTheme()" id="theme-btn">
+        <span>🌓 Alternar Modo Claro / Escuro</span>
+      </button>
+    </div>
+
+    <nav class="nav-list">
+      <div class="nav-item active" onclick="goToModule(0)">
+        <span class="nav-num">1</span>
+        <span>O Problema & A Proposta</span>
+      </div>
+      <div class="nav-item" onclick="goToModule(1)">
+        <span class="nav-num">2</span>
+        <span>Anatomia do Git & Hunks</span>
+      </div>
+      <div class="nav-item" onclick="goToModule(2)">
+        <span class="nav-num">3</span>
+        <span>O Gabarito (Gold Patch)</span>
+      </div>
+      <div class="nav-item" onclick="goToModule(3)">
+        <span class="nav-num">4</span>
+        <span>A Trilha dos Experimentos</span>
+      </div>
+      <div class="nav-item" onclick="goToModule(4)">
+        <span class="nav-num">5</span>
+        <span>Os Dados & O Simulador</span>
+      </div>
+      <div class="nav-item" onclick="goToModule(5)">
+        <span class="nav-num">6</span>
+        <span>Casos Reais do Revisor</span>
+      </div>
+      <div class="nav-item" onclick="goToModule(6)">
+        <span class="nav-num">7</span>
+        <span>Perguntas do Orientador</span>
+      </div>
+    </nav>
+  </div>
+
+  <div style="font-size: 0.8rem; color: var(--text-light); border-top: 1px solid var(--border); padding-top: 1rem;">
+    Giorgio Nicolas • CDIA / UFPB<br>
+    Iniciação Científica 2026
+  </div>
+</aside>
+
+<!-- MAIN CONTENT -->
+<main class="main-reader">
+
+  <!-- ========================================================================= -->
+  <!-- 1. O PROBLEMA & A PROPOSTA -->
+  <!-- ========================================================================= -->
+  <section class="module active" id="mod-0">
+    <div class="module-meta">Capítulo 1</div>
+    <h1 class="module-heading">O Problema Real e a Proposta</h1>
+    <p class="module-intro">Por que agentes de programação tornaram o ser humano o maior gargalo do desenvolvimento de software?</p>
+
+    <div class="box">
+      <h2>1. O Gargalo Invertido</h2>
+      <p>
+        Até pouco tempo atrás, o desafio da inteligência artificial era conseguir escrever código útil. 
+        Hoje, agentes como Claude Code, SWE-agent e OpenAI Codex geram dezenas de alterações em minutos.
+      </p>
+      <div class="note note-warning">
+        <strong>O Novo Desafio:</strong> A capacidade da IA de produzir código superou de longe a capacidade humana de revisar cuidadosamente esse código. O revisor não tem tempo de ler cada linha.
+      </div>
+      <p>
+        Para piorar, passar nos testes de software não garante que o código está certo. O paper recente <em>AgentLens (2026)</em> comprovou que cerca de <strong>10,7% dos patches que passam nos testes contêm erros sutis ou passaram por mero efeito colateral</strong>.
+      </p>
+    </div>
+
+    <div class="box">
+      <h2>2. A Ideia: A "Câmera de Segurança" da IA</h2>
+      <p>
+        Quando um programador humano entrega um código, você só vê o resultado final. Mas com agentes de IA, nós temos acesso à <strong>gravação completa de tudo o que ele fez no terminal (a trajetória)</strong>:
+      </p>
+      <ul style="margin: 0.8rem 0 0.8rem 1.5rem; color: var(--text-muted);">
+        <li>Quais arquivos ele abriu e leu com calma antes de alterar?</li>
+        <li>Ele alterou arquivos às cegas, sem abrir?</li>
+        <li>Ele tomou erro de tela vermelha (crash) no terminal logo antes de editar?</li>
+        <li>Ele rodou testes para validar a alteração antes de entregar?</li>
+      </ul>
+      <div class="note note-success">
+        <strong>A Pergunta da Pesquisa:</strong> Analisar como a IA se comportou durante a sessão nos ajuda a apontar quais pedaços do código têm maior probabilidade de erro, superando a intuição comum de olhar apenas blocos maiores?
+      </div>
+    </div>
+
+    <div class="footer-nav">
+      <span></span>
+      <button class="nav-btn nav-btn-primary" onclick="goToModule(1)">Próximo: Anatomia do Git & Hunks ➔</button>
+    </div>
+  </section>
+
+  <!-- ========================================================================= -->
+  <!-- 2. ANATOMIA DO GIT & HUNKS -->
+  <!-- ========================================================================= -->
+  <section class="module" id="mod-1">
+    <div class="module-meta">Capítulo 2</div>
+    <h1 class="module-heading">Anatomia do Git Diff e o Conceito de Hunk</h1>
+    <p class="module-intro">Entenda com precisão como o código alterado é representado e dividido.</p>
+
+    <div class="box">
+      <h2>O que é um "Hunk"?</h2>
+      <p>
+        Quando um arquivo de 500 linhas é editado, você raramente reescreve o arquivo todo. Você altera 3 linhas no início e 2 linhas no meio.
+      </p>
+      <p style="margin-top: 0.6rem;">
+        Cada bloco isolado de alteração delimitado por <code>@@ ... @@</code> é chamado de <strong>hunk</strong>. É a menor unidade atômica de modificação de código no Git.
+      </p>
+    </div>
+
+    <div class="box">
+      <h2>Dissecador de Git Diff (Clique em cada linha para entender)</h2>
+      <p style="color: var(--text-light); font-size: 0.9rem; margin-bottom: 0.8rem;">
+        Clique nas linhas coloridas abaixo para ver a explicação técnica de forma simples:
+      </p>
+
+      <div class="diff-container">
+        <div class="diff-row diff-hunk-header" onclick="showDiffDetail('header')">
+          <span>diff --git a/provider/dns.py b/provider/dns.py</span>
+        </div>
+        <div class="diff-row diff-hunk-header" onclick="showDiffDetail('coords')">
+          <span>@@ -45,6 +45,7 @@ class DNSProvider:</span>
+        </div>
+        <div class="diff-row diff-ctx" onclick="showDiffDetail('ctx')">
+          <span>&nbsp;    def authenticate(self):</span>
+        </div>
+        <div class="diff-row diff-del" onclick="showDiffDetail('del')">
+          <span>-        token = self.config.get('token')</span>
+        </div>
+        <div class="diff-row diff-add" onclick="showDiffDetail('add')">
+          <span>+        token = self.config.resolve('token_id')</span>
+        </div>
+        <div class="diff-row diff-ctx" onclick="showDiffDetail('ctx')">
+          <span>&nbsp;        return self.client.connect(token)</span>
+        </div>
+      </div>
+
+      <div class="diff-info-panel" id="diff-detail-text">
+        👉 <em>Clique em uma das linhas do diff acima para ler o significado técnico.</em>
+      </div>
+    </div>
+
+    <div class="box">
+      <h2>Por que avaliar por Hunk e não por Arquivo inteiro?</h2>
+      <p>
+        Porque um mesmo arquivo pode conter uma alteração <strong>perfeita</strong> na linha 45 e uma <strong>alucinação bizarra</strong> na linha 200.
+        Avaliar o arquivo inteiro como "certo" ou "errado" é grosseiro; a nossa pesquisa trabalha no nível mais fino: <strong>hunk por hunk</strong>.
+      </p>
+    </div>
+
+    <div class="footer-nav">
+      <button class="nav-btn" onclick="goToModule(0)">⬅ Voltar</button>
+      <button class="nav-btn nav-btn-primary" onclick="goToModule(2)">Próximo: O Gabarito (Gold Patch) ➔</button>
+    </div>
+  </section>
+
+  <!-- ========================================================================= -->
+  <!-- 3. O GABARITO (GOLD PATCH) -->
+  <!-- ========================================================================= -->
+  <section class="module" id="mod-2">
+    <div class="module-meta">Capítulo 3</div>
+    <h1 class="module-heading">O Gabarito: Alinhamento com Gold Patch</h1>
+    <p class="module-intro">O ajuste metodológico que eliminou a necessidade de máquinas caras com Docker.</p>
+
+    <div class="box">
+      <h2>1. A Ideia Antiga (Que travou os outros pesquisadores)</h2>
+      <p>
+        No início, muitos pensavam: <em>"Vamos pegar cada patch que a IA fez, desfazer um hunk por vez, subir um container Docker e rodar a suíte inteira de testes para ver qual hunk fez o teste falhar."</em>
+      </p>
+      <div class="note note-warning">
+        <strong>Por que isso não funciona na prática?</strong><br>
+        1. <strong>Custo de Nuvem:</strong> Cada suíte de testes leva de 10 a 20 minutos de processamento pesado. Para testar 1.500 hunks, seriam necessárias milhares de horas de servidores caros.<br>
+        2. <strong>Quebras Sintáticas Falsas:</strong> Hunks dependem uns dos outros. Se o Hunk 1 importa uma função e o Hunk 2 usa essa função, reverter só o Hunk 1 causa erro sintático, e não indica o erro real.
+      </div>
+    </div>
+
+    <div class="box">
+      <h2>2. A Solução Científica: O Gabarito Humano (Gold Patch)</h2>
+      <p>
+        No benchmark SWE-bench, cada bug veio de um repositório real do GitHub que já foi consertado por um desenvolvedor humano de verdade no passado.
+      </p>
+      <p style="margin-top: 0.6rem;">
+        A alteração oficial desse humano é o <strong>Gold Patch</strong> (o gabarito da prova):
+      </p>
+      <div class="note note-success">
+        <strong>A Métrica de Alinhamento:</strong><br>
+        • Se o hunk da IA mexe exatamente nos mesmos arquivos e linhas que o humano mexeu $ightarrow$ <strong>Hunk Pertinente</strong> (correto).<br>
+        • Se o hunk da IA cria arquivos paralelos ou mexe em coisas que o humano nunca tocou $ightarrow$ <strong>Hunk Espúrio</strong> (alucinado).
+      </div>
+      <p style="margin-top: 0.8rem;">
+        Isso nos permitiu rodar a pesquisa <strong>localmente, em minutos, com custo zero</strong> e com a mesma metodologia aceita em congressos como MSR e SBES.
+      </p>
+    </div>
+
+    <div class="footer-nav">
+      <button class="nav-btn" onclick="goToModule(1)">⬅ Voltar</button>
+      <button class="nav-btn nav-btn-primary" onclick="goToModule(3)">Próximo: A Trilha dos Experimentos ➔</button>
+    </div>
+  </section>
+
+  <!-- ========================================================================= -->
+  <!-- 4. A TRILHA DOS EXPERIMENTOS -->
+  <!-- ========================================================================= -->
+  <section class="module" id="mod-3">
+    <div class="module-meta">Capítulo 4</div>
+    <h1 class="module-heading">A Trilha dos Experimentos (Nossos Scripts)</h1>
+    <p class="module-intro">O que fizemos na prática e o papel de cada arquivo no projeto.</p>
+
+    <div class="box">
+      <h2>Os 4 Passos do Nosso Pipeline</h2>
+      <table class="clean-table">
+        <thead>
+          <tr>
+            <th>Arquivo / Script</th>
+            <th>O que ele faz?</th>
+            <th>Resultado Gerado</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>mini_projeto_01.py</code></td>
+            <td>Baixou 300 trajetórias e fez a primeira análise descritiva de comandos.</td>
+            <td><code>pistas_por_trajetoria.csv</code></td>
+          </tr>
+          <tr>
+            <td><code>extract_hunk_features.py</code></td>
+            <td>Fatiou 1.000 tarefas em 1.536 hunks, alinhou com os Gold Patches e extraiu os sinais de rastro.</td>
+            <td><code>hunk_features_dataset.csv</code></td>
+          </tr>
+          <tr>
+            <td><code>model_and_evaluate.py</code></td>
+            <td>Treinou o modelo com GroupKFold (sem vazamento de dados) e gerou a Curva de Esforço (AUCEC).</td>
+            <td><code>curva_esforco_inspecao.png</code></td>
+          </tr>
+          <tr>
+            <td><code>diff_risk_inspector.py</code></td>
+            <td>O protótipo visual: analisa um patch e exibe badges de risco com diagnósticos em texto.</td>
+            <td>Relatórios HTML interativos</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="box">
+      <h2>O que é o "GroupKFold" e por que ele importa?</h2>
+      <p>
+        Essa é uma dúvida comum de orientadores. Se um mesmo patch gerou 3 hunks, nós <strong>nunca</strong> colocamos 2 hunks no treino e 1 no teste, pois isso seria "vazamento de dados" (o modelo acertaria por ter decorado o patch).
+      </p>
+      <div class="note">
+        <strong>Validação Agrupada por Tarefa (GroupKFold):</strong> Garante que todas as alterações de uma mesma tarefa fiquem juntas estritamente no treino OU no teste. O teste é 100% cego e honesto.
+      </div>
+    </div>
+
+    <div class="footer-nav">
+      <button class="nav-btn" onclick="goToModule(2)">⬅ Voltar</button>
+      <button class="nav-btn nav-btn-primary" onclick="goToModule(4)">Próximo: Os Dados & O Simulador ➔</button>
+    </div>
+  </section>
+
+  <!-- ========================================================================= -->
+  <!-- 5. OS DADOS & O SIMULADOR -->
+  <!-- ========================================================================= -->
+  <section class="module" id="mod-4">
+    <div class="module-meta">Capítulo 5</div>
+    <h1 class="module-heading">Os Resultados e o Simulador de Esforço</h1>
+    <p class="module-intro">Veja na prática a superioridade do modelo sobre a base expandida de 1.536 hunks.</p>
+
+    <!-- Interactive Simulator -->
+    <div class="box">
+      <h2>Simulador: Quanto tempo você tem para revisar?</h2>
+      <p style="color: var(--text-muted); font-size: 0.95rem;">
+        Arraste a barra para escolher a porcentagem de código que você pode inspecionar e veja quantos erros cada método descobre:
+      </p>
+
+      <div class="slider-wrapper">
+        <div class="slider-header">
+          <span>Tempo de Inspeção do Desenvolvedor:</span>
+          <span id="slider-pct-txt" style="color: var(--accent); font-size: 1.15rem;">30%</span>
+        </div>
+        <input type="range" min="10" max="90" value="30" step="5" oninput="handleSliderChange(this.value)">
+
+        <div class="clean-metrics-grid">
+          <div class="clean-metric-card">
+            <div class="clean-metric-label">Ordem do Diff (De cima para baixo)</div>
+            <div class="clean-metric-number" id="txt-diff">31,1%</div>
+            <div style="font-size: 0.75rem; color: var(--text-light);">Leitura convencional</div>
+          </div>
+          <div class="clean-metric-card">
+            <div class="clean-metric-label">Tamanho do Bloco (Maior primeiro)</div>
+            <div class="clean-metric-number" id="txt-size">38,2%</div>
+            <div style="font-size: 0.75rem; color: var(--text-light);">Heurística clássica</div>
+          </div>
+          <div class="clean-metric-card winner">
+            <div class="clean-metric-label">⭐ Sinais de Trajetória (Nosso Modelo)</div>
+            <div class="clean-metric-number" id="txt-traj">48,6%</div>
+            <div style="font-size: 0.75rem; color: var(--accent); font-weight: 600;">Quase metade dos erros!</div>
+          </div>
+        </div>
+
+        <div id="slider-note" style="margin-top: 1rem; font-size: 0.9rem; color: var(--text-muted); text-align: center;">
+          Com 30% de inspeção, o modelo de trajetória captura <strong>48,6% dos erros</strong> (17,5% a mais que a ordem normal).
+        </div>
+      </div>
+    </div>
+
+    <div class="box">
+      <h2>O que os 1.536 Hunks provaram?</h2>
+      <p>
+        A nossa análise revelou 3 comportamentos claros que explicam esses números:
+      </p>
+      <div style="margin-top: 1rem; display: flex; flex-direction: column; gap: 0.8rem;">
+        <div class="note note-success">
+          <strong>1. read_before_write (Leu antes de editar):</strong> Em <strong>99,2%</strong> das alterações corretas, o agente leu o arquivo antes. Em 54% das alterações erradas, ele editou no escuro!
+        </div>
+        <div class="note note-warning">
+          <strong>2. error_preceded_edit (Editou após erro):</strong> Quando a IA acabou de tomar um erro no terminal, a chance da alteração seguinte ser errada quadruplica.
+        </div>
+        <div class="note">
+          <strong>3. last_edit_step_ratio (Momento da edição):</strong> Alterações feitas no terço final da sessão (pressa ou looping) têm taxa de erro muito maior.
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-nav">
+      <button class="nav-btn" onclick="goToModule(3)">⬅ Voltar</button>
+      <button class="nav-btn nav-btn-primary" onclick="goToModule(5)">Próximo: Casos Reais do Revisor ➔</button>
+    </div>
+  </section>
+
+  <!-- ========================================================================= -->
+  <!-- 6. CASOS REAIS DO REVISOR -->
+  <!-- ========================================================================= -->
+  <section class="module" id="mod-5">
+    <div class="module-meta">Capítulo 6</div>
+    <h1 class="module-heading">Casos Reais: Como o Revisor Vê o Código</h1>
+    <p class="module-intro">Veja o protótipo em ação em dois exemplos reais do nosso dataset.</p>
+
+    <div class="box">
+      <h2>Exemplo 1: A Alucinação Capturada (AnalogJ)</h2>
+      <p style="color: var(--text-muted); margin-bottom: 1rem;">
+        O agente criou um arquivo <code>reproduce.py</code> desnecessário de 14 linhas.
+      </p>
+      <div style="border: 1px solid var(--border); border-radius: 6px; padding: 1.2rem; background: var(--bg-subtle);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+          <strong>Arquivo: reproduce.py</strong>
+          <span style="color: var(--danger); font-weight: 700; font-size: 0.85rem;">🔴 RISCO 100/100 (ALERTA DE ALUCINAÇÃO)</span>
+        </div>
+        <p style="font-size: 0.9rem; color: var(--text-muted);">
+          <strong>O que o nosso modelo acusou na trajetória:</strong><br>
+          • <em>Edição às cegas:</em> O agente nunca abriu este arquivo antes de escrever.<br>
+          • <em>Gerado sob erro:</em> O passo imediatamente anterior falhou no terminal.<br>
+          • <em>Alto retrabalho:</em> Arquivo reeditado 7 vezes em desespero de looping.
+        </p>
+        <div style="margin-top: 0.8rem; font-size: 0.85rem; color: var(--danger);">
+          <strong>Realidade:</strong> O gabarito humano nunca tocou nesse arquivo. Alucinação descartada com sucesso!
+        </div>
+      </div>
+    </div>
+
+    <div class="box">
+      <h2>Exemplo 2: A Correção Cirúrgica (Melevir)</h2>
+      <p style="color: var(--text-muted); margin-bottom: 1rem;">
+        O agente alterou 1 linha na função principal do arquivo <code>ast.py</code>.
+      </p>
+      <div style="border: 1px solid var(--border); border-radius: 6px; padding: 1.2rem; background: var(--bg-subtle);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+          <strong>Arquivo: cognitive_complexity/utils/ast.py (Linha 85)</strong>
+          <span style="color: var(--success); font-weight: 700; font-size: 0.85rem;">🟢 RISCO 20/100 (CONFIÁVEL / REVISE PRIMEIRO)</span>
+        </div>
+        <p style="font-size: 0.9rem; color: var(--text-muted);">
+          <strong>O que o nosso modelo acusou na trajetória:</strong><br>
+          • <em>Leitura prévia:</em> O agente abriu o arquivo e investigou a função com calma.<br>
+          • <em>Sem erros de comando:</em> Passo executado de forma limpa e direta.
+        </p>
+        <div style="margin-top: 0.8rem; font-size: 0.85rem; color: var(--success);">
+          <strong>Realidade:</strong> O gabarito humano mexeu exatamente na linha 85 deste arquivo. O revisor encontra a solução de imediato!
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-nav">
+      <button class="nav-btn" onclick="goToModule(4)">⬅ Voltar</button>
+      <button class="nav-btn nav-btn-primary" onclick="goToModule(6)">Próximo: Perguntas do Orientador ➔</button>
+    </div>
+  </section>
+
+  <!-- ========================================================================= -->
+  <!-- 7. PERGUNTAS DO ORIENTADOR -->
+  <!-- ========================================================================= -->
+  <section class="module" id="mod-6">
+    <div class="module-meta">Capítulo 7</div>
+    <h1 class="module-heading">Perguntas do Orientador e Quiz de Domínio</h1>
+    <p class="module-intro">As perguntas difíceis que um professor pode fazer e como responder com segurança.</p>
+
+    <div class="box">
+      <h2>Flashcards: As 4 Perguntas Chave da Banca</h2>
+
+      <div class="accordion-item" onclick="toggleAcc(this)">
+        <div class="accordion-trigger">
+          <span>1. "Alguém já pesquisou isso antes?"</span>
+          <span class="accordion-indicator">Ver resposta ▾</span>
+        </div>
+        <div class="accordion-body">
+          <strong>Como responder:</strong><br>
+          "Professor, os trabalhos recentes de 2026 (como AgentLens e Shu et al.) olham a trajetória do agente apenas para prever se a tarefa inteira passou ou falhou (no nível macro). Mas o desenvolvedor revisando um Pull Request precisa saber <strong>onde olhar no diff</strong>. Quem tentou ir além parou no custo absurdo de rodar testes em Docker. Nós superamos isso com alinhamento estático contra 23 mil Gold Patches e provamos que a trajetória supera heurísticas de tamanho de código."
+        </div>
+      </div>
+
+      <div class="accordion-item" onclick="toggleAcc(this)">
+        <div class="accordion-trigger">
+          <span>2. "Por que olhar o tamanho do bloco não é suficiente?"</span>
+          <span class="accordion-indicator">Ver resposta ▾</span>
+        </div>
+        <div class="accordion-body">
+          <strong>Como responder:</strong><br>
+          "O tamanho mede apenas volume de texto, não risco. Um bloco de 100 linhas pode ser apenas uma tabela inofensiva de constantes. Por outro lado, um hunk de 1 linha (ex: uma condicional de autenticação) feito às cegas após um crash no terminal pode ser uma quebra crítica de segurança. O tamanho mede sintaxe; o rastro mede a <strong>incerteza e o comportamento do agente</strong>."
+        </div>
+      </div>
+
+      <div class="accordion-item" onclick="toggleAcc(this)">
+        <div class="accordion-trigger">
+          <span>3. "Como garante que o modelo não decorou as tarefas?"</span>
+          <span class="accordion-indicator">Ver resposta ▾</span>
+        </div>
+        <div class="accordion-body">
+          <strong>Como responder:</strong><br>
+          "Usamos validação cruzada <strong>GroupKFold agrupada por instance_id</strong>. Isso garante que todos os hunks gerados em uma mesma tarefa fiquem estritamente no conjunto de treino OU no conjunto de teste. O modelo nunca é avaliado em hunks de uma tarefa que ele já conhecia no treino."
+        </div>
+      </div>
+
+      <div class="accordion-item" onclick="toggleAcc(this)">
+        <div class="accordion-trigger">
+          <span>4. "Qual é o próximo passo para transformar em artigo?"</span>
+          <span class="accordion-indicator">Ver resposta ▾</span>
+        </div>
+        <div class="accordion-body">
+          <strong>Como responder:</strong><br>
+          "Hoje correlacionamos os passos de trajetória no nível de arquivo, momento e erros precedentes (o que deu ROC-AUC 0.790). O próximo passo é capturar os números de linha dos comandos de edição (ex: <code>edit 85:90</code>) para mapear o turno exato de cada hunk e escrever o artigo nos moldes do <strong>SBES</strong> ou <strong>MSR 2026</strong>."
+        </div>
+      </div>
+    </div>
+
+    <div class="box quiz-box">
+      <h2>Teste Rápido de Fixação</h2>
+      <p style="color: var(--text-muted); margin-bottom: 1rem;">
+        Responda à questão abaixo para conferir seu entendimento:
+      </p>
+
+      <div style="font-weight: 600; margin-bottom: 0.8rem;">
+        Qual foi o fator protetivo mais forte encontrado nos dados?
+      </div>
+      <button class="quiz-btn" onclick="checkQuiz(this, false)">A) O número de linhas removidas no hunk.</button>
+      <button class="quiz-btn" onclick="checkQuiz(this, true)">B) Ter lido o arquivo antes de realizar a primeira edição (read_before_write).</button>
+      <button class="quiz-btn" onclick="checkQuiz(this, false)">C) Ter editado no último passo da trajetória.</button>
+
+      <div class="quiz-result-msg" id="quiz-msg"></div>
+    </div>
+
+    <div class="footer-nav">
+      <button class="nav-btn" onclick="goToModule(5)">⬅ Voltar</button>
+      <button class="nav-btn nav-btn-primary" onclick="alert('Excelente trabalho, Nicolas! Você dominou todos os pontos do caderno de estudo.')">Concluir Estudo 🎉</button>
+    </div>
+  </section>
+
+</main>
+
+<script>
+  let activeMod = 0;
+
+  function goToModule(idx) {
+    document.querySelectorAll('.module').forEach(m => m.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    
+    document.getElementById('mod-' + idx).classList.add('active');
+    document.querySelectorAll('.nav-item')[idx].classList.add('active');
+    activeMod = idx;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function toggleTheme() {
+    const current = document.documentElement.getAttribute('data-theme');
+    const target = current === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', target);
+    document.getElementById('theme-btn').innerText = target === 'dark' ? '☀️ Modo Claro (Papel)' : '🌙 Modo Escuro Suave';
+  }
+
+  const diffNotes = {
+    'header': '<strong>Cabeçalho do Arquivo:</strong> Identifica o arquivo afetado (<code>dns.py</code>). O modelo usa isso para saber quais comandos na trajetória mexeram com este arquivo.',
+    'coords': '<strong>Coordenadas do Hunk (<code>@@ -45,6 +45,7 @@</code>):</strong> Mostra que no código antigo começava na linha 45 (6 linhas) e agora tem 7 linhas. É a certidão de nascimento do hunk.',
+    'ctx': '<strong>Linhas de Contexto:</strong> Linhas normais mantidas para o revisor humano entender onde a mudança está localizada no arquivo.',
+    'del': '<strong>Linha Removida (<code>-</code>):</strong> Trecho apagado pela IA.',
+    'add': '<strong>Linha Adicionada (<code>+</code>):</strong> Código novo inserido pela IA. É aqui que nosso modelo checa se ela editou às cegas ou com base em leitura prévia!'
+  };
+
+  function showDiffDetail(key) {
+    document.querySelectorAll('.diff-row').forEach(r => r.classList.remove('active'));
+    event.currentTarget.classList.add('active');
+    document.getElementById('diff-detail-text').innerHTML = diffNotes[key];
+  }
+
+  const dataPoints = {
+    10: { diff: 10.2, size: 14.5, traj: 18.2 },
+    20: { diff: 18.5, size: 25.0, traj: 32.6 },
+    30: { diff: 31.1, size: 38.2, traj: 48.6 },
+    40: { diff: 42.0, size: 49.1, traj: 61.4 },
+    50: { diff: 51.5, size: 59.8, traj: 72.0 },
+    60: { diff: 62.0, size: 68.9, traj: 80.5 },
+    70: { diff: 71.8, size: 77.2, traj: 87.1 },
+    80: { diff: 81.0, size: 85.0, traj: 92.4 },
+    90: { diff: 90.5, size: 92.8, traj: 96.8 }
+  };
+
+  function handleSliderChange(val) {
+    document.getElementById('slider-pct-txt').innerText = val + '%';
+    const item = dataPoints[val] || dataPoints[30];
+    document.getElementById('txt-diff').innerText = item.diff.toFixed(1).replace('.', ',') + '%';
+    document.getElementById('txt-size').innerText = item.size.toFixed(1).replace('.', ',') + '%';
+    document.getElementById('txt-traj').innerText = item.traj.toFixed(1).replace('.', ',') + '%';
+
+    const diff = (item.traj - item.diff).toFixed(1).replace('.', ',');
+    document.getElementById('slider-note').innerHTML = 
+      `Com <strong>${val}% de inspeção</strong>, o modelo de trajetória captura <strong>${item.traj.toFixed(1).replace('.', ',')}% dos erros</strong> (${diff}% a mais que a ordem do diff).`;
+  }
+
+  function toggleAcc(el) {
+    el.classList.toggle('open');
+    const ind = el.querySelector('.accordion-indicator');
+    ind.innerText = el.classList.contains('open') ? 'Fechar ▴' : 'Ver resposta ▾';
+  }
+
+  function checkQuiz(btn, isCorrect) {
+    const btns = document.querySelectorAll('.quiz-btn');
+    btns.forEach(b => b.onclick = null);
+    const msg = document.getElementById('quiz-msg');
+    msg.style.display = 'block';
+
+    if (isCorrect) {
+      btn.classList.add('correct');
+      msg.style.background = 'var(--success-bg)';
+      msg.style.border = '1px solid var(--success)';
+      msg.style.color = 'var(--success)';
+      msg.innerHTML = '<strong>Correto!</strong> Em 99,2% das alterações corretas o arquivo foi lido antes. A ausência de leitura prévia é o maior indicador de alucinação.';
+    } else {
+      btn.classList.add('wrong');
+      btns[1].classList.add('correct');
+      msg.style.background = 'var(--danger-bg)';
+      msg.style.border = '1px solid var(--danger)';
+      msg.style.color = 'var(--danger)';
+      msg.innerHTML = '<strong>Incorreto.</strong> A resposta correta é a B. O sinal de <code>read_before_write</code> teve o coeficiente mais protetivo (-4.327).';
+    }
+  }
+</script>
+</body>
+</html>

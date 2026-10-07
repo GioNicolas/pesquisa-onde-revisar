@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Revisor Inteligente — AnalogJ__lexicon-336</title>
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #0f172a; color: #f8fafc; padding: 2rem; line-height: 1.5; }
+  .container { max-width: 950px; margin: 0 auto; }
+  h1 { color: #38bdf8; font-size: 1.8rem; margin-bottom: 0.3rem; }
+  .subtitle { color: #94a3b8; margin-bottom: 2rem; }
+  .hunk-card { background: #1e293b; border: 1px solid #334155; border-radius: 8px; margin-bottom: 1.5rem; padding: 1.2rem; }
+  .hunk-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #334155; padding-bottom: 0.8rem; margin-bottom: 0.8rem; flex-wrap: wrap; gap: 0.5rem; }
+  .file-tag { background: #0284c7; color: white; padding: 3px 8px; border-radius: 4px; font-weight: bold; font-family: monospace; font-size: 0.9rem; margin-right: 0.5rem; }
+  .badge-safe { background: rgba(52, 211, 153, 0.2); color: #34d399; padding: 3px 8px; border-radius: 4px; font-size: 0.85rem; font-weight: bold; }
+  .badge-warn { background: rgba(251, 191, 36, 0.2); color: #fbbf24; padding: 3px 8px; border-radius: 4px; font-size: 0.85rem; font-weight: bold; }
+  .badge-danger { background: rgba(248, 113, 113, 0.2); color: #f87171; padding: 3px 8px; border-radius: 4px; font-size: 0.85rem; font-weight: bold; }
+  .diag-list { list-style: none; padding-left: 0; margin-top: 0.5rem; font-size: 0.95rem; }
+  .diag-list li { padding: 0.2rem 0; }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>🛡️ Protótipo: Revisor Inteligente de Hunks</h1>
+  <div class="subtitle">Instância: <strong>AnalogJ__lexicon-336</strong> • Ordenação inteligente por Sinais de Trajetória</div>
+  
+        <div class="hunk-card">
+          <div class="hunk-header">
+            <div>
+              <span class="file-tag">lexicon/providers/memset.py</span>
+              <span style="color: #94a3b8; font-size: 0.85rem;">Linhas +20 (3 adicionadas, 2 removidas)</span>
+            </div>
+            <div>
+              <span class="badge-safe">🟢 CONFIÁVEL / NÚCLEO (25.0/100)</span>
+              <span class="badge-danger" style="margin-left: 0.5rem;">Ground Truth: ALUCINADO / FORA DE ESCOPO</span>
+            </div>
+          </div>
+          <ul class="diag-list">
+            <li>✅ Arquivo inspecionado pelo agente antes da edição.</li><li>🚨 GERADO SOB ERRO: O passo anterior à edição falhou no terminal (crash/exceção).</li><li>✅ O agente executou testes após a última alteração neste arquivo.</li>
+          </ul>
+        </div>
+        
+        <div class="hunk-card">
+          <div class="hunk-header">
+            <div>
+              <span class="file-tag">lexicon/providers/memset.py</span>
+              <span style="color: #94a3b8; font-size: 0.85rem;">Linhas +138 (3 adicionadas, 3 removidas)</span>
+            </div>
+            <div>
+              <span class="badge-safe">🟢 CONFIÁVEL / NÚCLEO (25.0/100)</span>
+              <span class="badge-danger" style="margin-left: 0.5rem;">Ground Truth: ALUCINADO / FORA DE ESCOPO</span>
+            </div>
+          </div>
+          <ul class="diag-list">
+            <li>✅ Arquivo inspecionado pelo agente antes da edição.</li><li>🚨 GERADO SOB ERRO: O passo anterior à edição falhou no terminal (crash/exceção).</li><li>✅ O agente executou testes após a última alteração neste arquivo.</li>
+          </ul>
+        </div>
+        
+        <div class="hunk-card">
+          <div class="hunk-header">
+            <div>
+              <span class="file-tag">reproduce.py</span>
+              <span style="color: #94a3b8; font-size: 0.85rem;">Linhas +1 (14 adicionadas, 0 removidas)</span>
+            </div>
+            <div>
+              <span class="badge-danger">🔴 ALTO RISCO DE ALUCINAÇÃO (100.0/100)</span>
+              <span class="badge-danger" style="margin-left: 0.5rem;">Ground Truth: ALUCINADO / FORA DE ESCOPO</span>
+            </div>
+          </div>
+          <ul class="diag-list">
+            <li>⚠️ EDIÇÃO ÀS CEGAS: O agente nunca abriu este arquivo antes de alterar!</li><li>🚨 GERADO SOB ERRO: O passo anterior à edição falhou no terminal (crash/exceção).</li><li>⚠️ Alto retrabalho: arquivo reeditado 7 vezes.</li><li>✅ O agente executou testes após a última alteração neste arquivo.</li>
+          </ul>
+        </div>
+        
+</div>
+</body>
+</html>

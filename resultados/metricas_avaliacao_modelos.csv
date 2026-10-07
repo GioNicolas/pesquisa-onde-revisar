@@ -1,0 +1,6 @@
+Estratégia,AUCEC,ROC-AUC,Recall@20%,Recall@30%
+Random (Sorteio),0.505,0.512,20.5%,29.7%
+Diff Order (Sequencial),0.46,0.365,18.5%,31.1%
+Hunk Size (Maior Primeiro),0.542,0.607,25.0%,38.2%
+Trajetória (Regressão Logística),0.61,0.783,32.3%,48.5%
+Trajetória (Random Forest),0.613,0.79,32.6%,48.6%
