@@ -1,5 +1,7 @@
 # Diário de pesquisa — Onde revisar primeiro
 
+> Nota de 15/10/2026: este diário preserva interpretações históricas. Os resultados iniciais usam alinhamento com patch humano como proxy; não comprovam detecção de bugs nem validação definitiva da hipótese. Para o entendimento atual, consulte o [estado da pesquisa](docs/estado-da-pesquisa.md).
+
 Uma entrada por sessão de trabalho, a mais recente no topo. Anote o que fez, o que viu (com números), o que decidiu e as dúvidas para o orientador. Esse registro vira a seção de método do artigo e a história da candidatura.
 
 **Pergunta:** sinais da trajetória do agente indicam quais hunks de um patch estão errados melhor que regras simples (sorteio, tamanho do hunk)?

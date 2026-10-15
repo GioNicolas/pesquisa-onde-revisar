@@ -1,5 +1,7 @@
 # Planejamento da Pesquisa — Onde Revisar Primeiro
 
+> Nota de 15/10/2026: este planejamento contém hipóteses e escolhas históricas. Alinhamento com patch humano é um proxy e não um rótulo confirmado de correção. Para o estado atual e suas limitações, consulte o [estado da pesquisa](docs/estado-da-pesquisa.md).
+
 > **Projeto:** Priorização de Hunks em Patches Gerados por Agentes de IA via Sinais de Trajetória  
 > **Autor:** Giorgio Nicolas de A. Bertino (CDIA — UFPB)  
 > **Data de Atualização:** 30 de setembro de 2026  
