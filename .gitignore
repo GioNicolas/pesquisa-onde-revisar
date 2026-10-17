@@ -27,3 +27,6 @@ desktop.ini
 # Segredos
 .env
 .env.*
+
+# Saídas grandes e regeneráveis (scripts/confirmatorio_silencioso.py recria)
+dados/confirmatorio_c1_trechos.csv

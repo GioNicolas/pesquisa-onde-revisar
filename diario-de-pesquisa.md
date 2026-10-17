@@ -21,10 +21,45 @@ Uma entrada por sessão de trabalho, a mais recente no topo. Anote o que fez, o 
 | --- | --- | --- |
 | 25/09/2026 | Tema: sinais da trajetória para priorizar hunks na revisão | Lacuna confirmada por duas revisões de literatura; ponte LSP↔MCP já existe |
 | 30/09/2026 | Refinamento do Ground Truth: alinhamento com Gold Patch e testes PASS_TO_PASS | Reversão manual de hunks causa acoplamento sintático espúrio e custo excessivo de Docker |
+| 15/10/2026 | Nova pergunta: onde o humano deve começar a revisar (rastro como registro de evidência), com 4 sub-perguntas | Orientação do professor: prever onde a IA atual erra fica obsoleto a cada modelo novo; ver `docs/pergunta-de-pesquisa.md` |
 
 ---
 
 ## Entradas
+
+### 17/10/2026 — teste confirmatório: "trecho silencioso" CONFIRMADO
+- **Fiz:** Registrei antes um teste confirmatório com uma única hipótese (H1: trecho não citado no resumo final → mais chance de ser ponto de decisão), critério de significância e de relevância (razão de chances ≤ 0,80). Rodei em dados novos: OpenHands + Qwen3-Coder (principal) e Cursor (suplementar).
+- **Vi (com números):** OpenHands, com 83.010 trechos de 4.119 tarefas: não citados 18,9% × citados 8,2%; razão de chances ajustada 0,634 [0,556; 0,723], p = 5e-12. CONFIRMADA. Vale para tarefas resolvidas e não resolvidas. No Cursor, 18,1% × 4,2%, mas não significativo (33 tarefas). Como fator de ordenação, porém, M quase não melhora o que o código já dá (AUC 0,716 → 0,718).
+- **Decidi:** O "trecho silencioso" vira o resultado central. Corrigi um erro de desenho meu: o controle "tamanho" é soma exata de dois outros. O resultado principal fica idêntico.
+- **Dúvida:** Como transformar a associação forte num ganho prático para o revisor (sinal explicável × ranking)?
+- **Próximo passo:** Atualizar o orientador e decidir a estrutura do artigo.
+
+### 16/10/2026 (noite) — piloto 3, última chance: três pistas sobrevivem
+- **Fiz:** Encontrei rastros públicos de agentes modernos (SWE-rebench, julho de 2026: Claude Code, Codex, Cursor e outros). Registrei o piloto 3 como última chance. Reconstruí os patches do Claude Code reaplicando as edições nos repositórios (519 de 555 sessões).
+- **Vi (com números):** 452 patches, 101 tarefas, mediana de 4 trechos. "Uso conferido" varia em 44% dos patches, "estava no plano" em 50% e "mencionado no resumo" em 56%. O código e o pedido não preveem nenhuma delas bem (AUC 0,56–0,65). As três passam também no subconjunto sem artefato de nome. "Estava na falha" falhou por erro de medida (o status do comando não indica falha de teste).
+- **Decidi:** A linha continua. Próximo passo: o duelo (dia 5), com régua e critério registrados antes.
+- **Dúvida:** Essas pistas apontam para os trechos que precisam de atenção, ou só variam?
+- **Próximo passo:** Registrar a régua "onde os agentes discordam" e o critério do duelo.
+- **Duelo (dia 5, registrado antes):** o rastro NÃO venceu: AUC 0,614 → 0,634 (Δ +0,021, IC 95% de −0,014 a +0,058). A direção é a esperada. Trechos não citados no resumo são pontos de decisão em 20,8% dos casos, contra 8,8% dos citados. Inconclusivo por falta de dados. Candidato a teste confirmatório: "trecho silencioso".
+
+### 16/10/2026 — crítica externa e piloto 2 (teste de morte #1)
+- **Fiz:** Pedi uma crítica externa dura ao desenho (notas internas, não publicadas). Adotei um plano de 5 dias com "testes de morte", registrado antes da análise (`docs/piloto-premissas.md`). Rodei os dias 1–3: cinco pistas ligadas ao trecho (estava na falha, uso conferido, plano, decisão, mencionado no fim) em dados novos (trajetórias 1.001–2.000, `scripts/piloto2_pistas.py`).
+- **Vi (com números):** 230 patches, 42 tarefas, 584 trechos. Nenhuma pista variou em ≥ 30% dos patches (5% a 26%). O teste de morte #1 disparou. A mediana é de 2 trechos por patch: há pouco a ordenar.
+- **Decidi:** Parar a linha de ordenação com este dataset, como combinado. Gravar a revisão humana no Catenary é difícil na prática e fica para depois.
+- **Dúvida:** O problema é a ideia ou os dados (agentes de 2024, patches minúsculos)?
+- **Próximo passo:** Decidir entre procurar dados com patches maiores (agentes modernos), transformar o resultado negativo em contribuição ou mudar de rumo.
+
+### 15/10/2026 (tarde) — piloto das premissas
+- **Fiz:** Revisão de literatura (`docs/revisao-de-literatura.md`; mais próximo: ARCTIC/Meta, que ordena regiões do diff só com o código). Piloto registrado antes da análise (`docs/piloto-premissas.md`, script `scripts/piloto_premissas.py`).
+- **Vi (com números):** 154 patches com 2+ trechos de código (38 tarefas, 383 trechos, 86% mapeados no rastro). P1 FALHOU: a pista "rodou algo depois da última edição" varia entre os trechos em só 3,9% dos patches. P2 passou sem significado (AUC 0,41–0,49), porque não há variação a prever. Descritivo: "estava no plano" varia em 29,9% dos patches; "decisão" em 13,6%.
+- **Decidi:** Não seguir para a P3 com essa pista. Ela mede a sessão, não o trecho. A medida exata (cobertura: quais linhas as execuções do agente realmente rodaram) é viável para 27 das 40 tarefas, que têm imagem Docker pronta no SWE-rebench.
+- **Próximo passo:** Decidir se fazemos um segundo piloto registrado com a medida exata.
+
+### 15/10/2026
+- **Fiz:** Conversa com o orientador. Redefinição da pergunta de pesquisa e das sub-perguntas.
+- **Vi:** A crítica central do professor: não vale pesquisar "onde a IA normalmente erra", porque isso muda a cada modelo. Vale apontar onde o humano deve começar a revisar, com sinais que continuem válidos mesmo com uma IA perfeita.
+- **Decidi:** Pergunta principal: "o rastro do agente ajuda a apontar onde o humano deve começar a revisar um patch?". RQ1 (por que um trecho precisa de atenção), RQ2 (quais motivos deixam marcas no rastro), RQ3 (ordenar com rastro + código bate ordenar só com código?), RQ4 (vale para agentes fracos e fortes?). O rastro passa a ser registro de evidência, não detector de sintomas de IA fraca.
+- **Próximo passo:** Busca de literatura guiada pelas RQs; depois, atualização ao orientador.
 
 ### 02/10/2026
 - **Fiz:** Criação e disponibilização do Portal Interativo de Aprendizado (`aprender_pesquisa.html` e gerador `build_learning_portal.py`) para estudo aprofundado e preparação do autor antes do contato com orientadores.
