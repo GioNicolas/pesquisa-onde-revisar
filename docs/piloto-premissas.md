@@ -319,8 +319,70 @@ Scripts: `scripts/confirmatorio_silencioso.py` (C1), `scripts/confirmatorio_curs
 
 O modelo registrado tinha 12 controles, mas **"tamanho" é exatamente linhas adicionadas + linhas removidas**, o que deixa a matriz com uma coluna redundante (posto 11 de 12). Em C1 o ajuste contornou isso sozinho; em C2 (amostra pequena) o cálculo falhou (razão de chances 0, sem intervalo). A correção foi retirar "tamanho" — o espaço de colunas é o mesmo, e **o resultado de C1 é idêntico** (0,634 [0,556; 0,723]) com e sem a coluna. O script também passou a marcar "não estimável" em vez de "refutada" quando o modelo não converge.
 
+**Segundo desvio (achado em 20/10/2026):** o controle "posição relativa" dividia a posição do trecho entre **todos** os hunks do patch (incluindo testes e arquivos novos) pelo número de trechos de **código**, por isso passava de 1 em 30,4% dos trechos. Com a conta certa (ordem entre os trechos de código, de 0 a 1), o resultado de C1 **não muda**: razão de chances 0,634 [0,556; 0,722], p unilateral = 4 × 10⁻¹². O script do confirmatório foi corrigido. Os scripts dos pilotos 1 a 3 têm a mesma conta e foram mantidos como estavam, para reproduzir os números registrados; nesses pilotos ela só afeta os controles (P2 e o duelo), não a variação das pistas (P1).
+
 ### Leitura
 
 1. **Confirmado em dados novos, com outro agente, outro modelo e outras tarefas:** trechos que o agente **não menciona no resumo final** são escolhas próprias (que a maioria das outras tentativas não fez) **2,3 vezes mais** (18,9% × 8,2%). Vale em tarefas resolvidas e não resolvidas, e no subconjunto sem artefato de nome. O piloto 3 (Claude Code: 20,8% × 8,8%) e o Cursor (18,1% × 4,2%) mostram o mesmo padrão.
 2. **Limite importante:** como fator de ordenação, somado às características do código, o ganho é pequeno (Δ AUC +0,002). O valor prático mais claro é como **sinal explicável** para o revisor ("o agente não te contou sobre este trecho"), não como um ganho grande de ranking.
 3. **Limitações:** a régua "ponto de decisão" é uma aproximação (discordância entre tentativas), não "precisa de atenção" medido por pessoas; em C1 a unidade costuma ser a classe, não o método (cabeçalho padrão do git).
+
+---
+
+# Validação humana da régua — registro
+
+**Registrado em 20/10/2026, ANTES de sortear a amostra e de qualquer pessoa ver os trechos.**
+
+## Pergunta
+
+A régua automática "ponto de decisão" (no máximo 25% das outras tentativas mexeram na mesma unidade) concorda com o julgamento de uma pessoa sobre **o que foi uma decisão própria do agente**? Secundariamente: os trechos silenciosos são os que uma pessoa mais ia querer que lhe avisassem?
+
+## Amostra
+
+- Origem: trechos elegíveis do C1 (OpenHands + Qwen3-Coder).
+- Para a leitura ser viável: trechos com 2 a 40 linhas alteradas, no máximo **um trecho por tarefa**.
+- **100 trechos, 25 em cada combinação** de régua (Y = 0/1) × resumo (citado/não citado). Sorteio com semente fixa (20261020) em `scripts/validacao_amostra.py`.
+- Ordem de apresentação aleatória.
+
+## O que a pessoa vê e o que não vê
+
+- **Vê:** o pedido da tarefa (texto da issue), o arquivo, o trecho e, se quiser, o resto do patch.
+- **Não vê:** o resumo final do agente, as outras tentativas, se a tarefa foi resolvida, o valor da régua e se o trecho foi citado. O gabarito fica num arquivo separado, que só o script de análise abre.
+
+## Perguntas (para cada trecho)
+
+- **P1 (decide):** "Esse trecho é uma decisão própria do agente, algo que o pedido não deixava óbvio?" (Sim / Não / Não sei)
+- **P2 (secundária):** "Se você fosse revisar esse patch, ia querer ser avisado sobre esse trecho?" (Sim / Não / Não sei)
+- Comentário opcional.
+
+## Análise e critério (fixados agora)
+
+"Não sei" sai da conta de cada pergunta, e a quantidade é reportada.
+
+- **V1 — principal:** proporção de P1 = Sim entre os trechos com Y = 1, comparada com Y = 0.
+  - **Régua validada:** diferença de **pelo menos 20 pontos percentuais**, com teste exato de Fisher unilateral p < 0,05.
+  - **Validação fraca:** significativa, mas com diferença menor que 20 pontos.
+  - **Não validada:** não significativa ou na direção oposta.
+  - Também é reportado o kappa de Cohen entre P1 e Y.
+- **V2 — secundária (não decide):** proporção de P2 = Sim nos trechos não citados × citados (Fisher unilateral), e o mesmo para P1.
+- Se mais de 20% das respostas de P1 forem "Não sei", o resultado é marcado como frágil.
+
+## Decisão
+
+- **Validada:** o artigo apresenta a régua como medida apoiada por julgamento humano.
+- **Fraca ou não validada:** o artigo descreve a régua como "discordância entre tentativas", sem chamá-la de decisão, e relata a validação como limite.
+
+## Limites conhecidos
+
+- **Um único avaliador**, o autor, que conhece a hipótese. O cegamento (sem régua, sem resumo, ordem aleatória) reduz o viés, mas não o elimina. Se houver um segundo avaliador, ele responde os 30 primeiros trechos da mesma ordem, e reportamos a concordância entre os dois.
+- O avaliador julga a partir do pedido; um mantenedor do projeto poderia julgar diferente.
+
+## Andamento (20/10/2026): validação humana não realizada
+
+- **Por falta de tempo, a validação humana não foi feita.** Foram preenchidos 35 dos 100 trechos (V001–V035), mas **por um modelo de IA**, não por uma pessoa. O autor só olhou por cima. Isso não atende ao protocolo e **não é reportado como validação humana**.
+- Por transparência, eis o que a avaliação por IA deu (é evidência fraca: um único modelo, e não dá para garantir que ele não teve acesso ao gabarito, que estava na mesma pasta):
+  - P1 "decisão própria": régua Y = 1 em 65% (11/17) × Y = 0 em 56% (10/18), Fisher p = 0,42, kappa 0,09.
+  - P2 "ia querer ser avisado": não citado em 79% (11/14) × citado em 48% (10/21), p = 0,07.
+  - Em todos os 35 trechos, P1 e P2 tiveram a mesma resposta.
+- **Decisão, conforme a regra registrada para "não validada":** no artigo, a régua é descrita como **"discordância entre tentativas"**, e não como "decisão" medida por pessoas. A validação humana fica como limitação declarada e próximo passo.
+- **Para uma validação futura:** o autor viu as respostas da IA em V001–V035, então esses trechos não servem mais para ele avaliar às cegas. Um avaliador novo (por exemplo, o orientador ou um colega) pode usar a página inteira; o autor, só V036–V100.

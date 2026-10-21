@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Validação da régua</title>
+<style>
+  :root {
+    --bg: #f6f7f9; --card: #ffffff; --tx: #1d2430; --mut: #5a6475; --bd: #d5dbe6;
+    --pri: #14306b; --add: #e6f4ea; --addtx: #135c2b; --rem: #fbe9e7; --remtx: #8a2a17;
+    --hunk: #eef2f8; --sel: #14306b; --seltx: #ffffff; --ok: #2f7a1f;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #12151b; --card: #1b2029; --tx: #e3e7ee; --mut: #9aa4b5; --bd: #303846;
+      --pri: #9db8f0; --add: #16301f; --addtx: #8fd6a4; --rem: #3a1d19; --remtx: #f0a596;
+      --hunk: #232a36; --sel: #9db8f0; --seltx: #12151b; --ok: #8fd6a4;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--tx); font: 15px/1.5 "Segoe UI", Arial, sans-serif; }
+  .wrap { max-width: 980px; margin: 0 auto; padding: 16px; }
+  h1 { font-size: 20px; margin: 0 0 4px; color: var(--pri); }
+  .mut { color: var(--mut); font-size: 13px; }
+  .card { background: var(--card); border: 1px solid var(--bd); border-radius: 8px; padding: 14px 16px; margin: 12px 0; }
+  details > summary { cursor: pointer; font-weight: 600; color: var(--pri); }
+  .barra { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+  .prog { flex: 1; min-width: 160px; height: 8px; background: var(--hunk); border-radius: 4px; overflow: hidden; }
+  .prog > div { height: 100%; background: var(--ok); width: 0; }
+  button { font: inherit; border: 1px solid var(--bd); background: var(--card); color: var(--tx); border-radius: 6px; padding: 6px 12px; cursor: pointer; }
+  button:hover { border-color: var(--pri); }
+  button.on { background: var(--sel); color: var(--seltx); border-color: var(--sel); }
+  .k { font-size: 11px; color: var(--mut); margin-left: 4px; }
+  button.on .k { color: var(--seltx); opacity: .8; }
+  .pedido { white-space: pre-wrap; max-height: 280px; overflow: auto; background: var(--hunk); padding: 10px; border-radius: 6px; font-size: 13.5px; }
+  pre.diff { margin: 0; overflow-x: auto; font: 12.5px/1.45 Consolas, "Courier New", monospace; border: 1px solid var(--bd); border-radius: 6px; }
+  pre.diff span { display: block; padding: 0 8px; white-space: pre; }
+  .a { background: var(--add); color: var(--addtx); }
+  .r { background: var(--rem); color: var(--remtx); }
+  .h { background: var(--hunk); color: var(--mut); }
+  .alvo { outline: 2px solid var(--pri); }
+  .perg { margin: 12px 0 4px; font-weight: 600; }
+  .ops { display: flex; gap: 8px; flex-wrap: wrap; }
+  textarea { width: 100%; min-height: 54px; font: inherit; background: var(--card); color: var(--tx); border: 1px solid var(--bd); border-radius: 6px; padding: 6px; }
+  .topo { display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; align-items: baseline; }
+  .arq { font-family: Consolas, monospace; font-size: 13px; word-break: break-all; }
+  .aviso { color: var(--ok); font-size: 13px; min-height: 18px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Validação da régua: decisões próprias do agente</h1>
+  <div class="mut">100 trechos de patches reais de um agente. As respostas ficam salvas neste navegador. Exporte de tempos em tempos.</div>
+
+  <div class="card">
+    <details>
+      <summary>Como rotular (leia antes de começar)</summary>
+      <p><b>P1: decisão própria</b> é algo que o agente escolheu fazer e que o pedido não pedia nem tornava óbvio.</p>
+      <ul>
+        <li><b>Sim:</b> acrescentou um comportamento, parâmetro ou caso que o pedido não menciona; mexeu em outro lugar "por precaução"; escolheu um entre vários jeitos claramente diferentes de resolver; reorganizou código sem o pedido exigir.</li>
+        <li><b>Não:</b> é a correção que o pedido descreve, ou uma consequência mecânica dela (import, ajuste de assinatura, mudar junto um nome que foi alterado).</li>
+        <li><b>Não sei:</b> só se não der para entender o trecho ou o pedido.</li>
+      </ul>
+      <p><b>P2: ia querer ser avisado?</b> Imagine que você vai revisar esse patch. Esse trecho é algo que você gostaria que o agente tivesse te contado?</p>
+      <p>Julgue <b>só pelo pedido e pelo código</b>. Não existe resposta "esperada", e não tente adivinhar padrões. Teclas: <b>1/2/3</b> para P1, <b>4/5/6</b> para P2, <b>←/→</b> para navegar.</p>
+    </details>
+  </div>
+
+  <div class="barra">
+    <button id="ant">← Anterior</button>
+    <button id="prox">Próximo →</button>
+    <button id="pend">Próximo sem resposta</button>
+    <div class="prog"><div id="progbar"></div></div>
+    <span id="progtx" class="mut"></span>
+  </div>
+
+  <div class="card">
+    <div class="topo">
+      <div><b id="vid"></b> · <span id="repo" class="mut"></span></div>
+      <div class="arq" id="arq"></div>
+    </div>
+    <div class="perg">Pedido da tarefa</div>
+    <div class="pedido" id="pedido"></div>
+    <div class="perg">Trecho a julgar</div>
+    <pre class="diff alvo" id="trecho"></pre>
+    <details style="margin-top:8px"><summary>Ver o patch inteiro</summary><pre class="diff" id="patch" style="margin-top:6px"></pre></details>
+
+    <div class="perg">P1. Esse trecho é uma decisão própria do agente, algo que o pedido não deixava óbvio?</div>
+    <div class="ops" data-q="p1">
+      <button data-v="sim">Sim<span class="k">1</span></button>
+      <button data-v="nao">Não<span class="k">2</span></button>
+      <button data-v="nao_sei">Não sei<span class="k">3</span></button>
+    </div>
+    <div class="perg">P2. Se você fosse revisar esse patch, ia querer ser avisado sobre esse trecho?</div>
+    <div class="ops" data-q="p2">
+      <button data-v="sim">Sim<span class="k">4</span></button>
+      <button data-v="nao">Não<span class="k">5</span></button>
+      <button data-v="nao_sei">Não sei<span class="k">6</span></button>
+    </div>
+    <div class="perg">Comentário (opcional)</div>
+    <textarea id="coment" placeholder="Por que você respondeu assim, se quiser anotar"></textarea>
+  </div>
+
+  <div class="barra">
+    <button id="exp">Exportar respostas (CSV)</button>
+    <input type="file" id="imp" accept=".csv" style="display:none"><button id="impbtn" type="button">Importar CSV salvo</button>
+    <span class="aviso" id="aviso"></span>
+  </div>
+</div>
+
+<script>
+const ITENS = /*DADOS*/[];
+const CHAVE = "validacao-regua-v1";
+let resp = {};
+try { resp = JSON.parse(localStorage.getItem(CHAVE) || "{}"); } catch (e) { resp = {}; }
+let atual = 0;
+try { atual = Math.min(+localStorage.getItem(CHAVE + "-pos") || 0, ITENS.length - 1); } catch (e) {}
+
+const $ = (id) => document.getElementById(id);
+function salva() {
+  try { localStorage.setItem(CHAVE, JSON.stringify(resp)); localStorage.setItem(CHAVE + "-pos", atual); } catch (e) {}
+}
+function diff(el, texto) {
+  el.textContent = "";
+  for (const l of texto.split("\n")) {
+    const s = document.createElement("span");
+    s.textContent = l || " ";
+    if (l.startsWith("@@") || l.startsWith("diff --git") || l.startsWith("index ") || l.startsWith("---") || l.startsWith("+++")) s.className = "h";
+    else if (l.startsWith("+")) s.className = "a";
+    else if (l.startsWith("-")) s.className = "r";
+    el.appendChild(s);
+  }
+}
+function completo(id) { const r = resp[id]; return r && r.p1 && r.p2; }
+function mostra() {
+  const it = ITENS[atual];
+  $("vid").textContent = it.id + " (" + (atual + 1) + "/" + ITENS.length + ")";
+  $("repo").textContent = it.repo;
+  $("arq").textContent = it.arquivo;
+  $("pedido").textContent = it.pedido;
+  diff($("trecho"), it.trecho);
+  diff($("patch"), it.patch);
+  const r = resp[it.id] || {};
+  document.querySelectorAll(".ops").forEach((g) => g.querySelectorAll("button").forEach((b) => b.classList.toggle("on", r[g.dataset.q] === b.dataset.v)));
+  $("coment").value = r.coment || "";
+  const n = ITENS.filter((x) => completo(x.id)).length;
+  $("progbar").style.width = (100 * n / ITENS.length) + "%";
+  $("progtx").textContent = n + " de " + ITENS.length + " respondidos";
+  window.scrollTo(0, 0);
+}
+function marca(q, v) {
+  const id = ITENS[atual].id;
+  resp[id] = Object.assign({}, resp[id], { [q]: v, quando: new Date().toISOString() });
+  salva(); mostra();
+  const n = ITENS.filter((x) => completo(x.id)).length;
+  if (completo(id) && n % 25 === 0) $("aviso").textContent = n + " respondidos: bom momento para exportar.";
+}
+function vai(d) { atual = Math.max(0, Math.min(ITENS.length - 1, atual + d)); salva(); mostra(); }
+
+document.querySelectorAll(".ops").forEach((g) => g.addEventListener("click", (e) => {
+  const b = e.target.closest("button"); if (b) marca(g.dataset.q, b.dataset.v);
+}));
+$("coment").addEventListener("input", (e) => {
+  const id = ITENS[atual].id; resp[id] = Object.assign({}, resp[id], { coment: e.target.value }); salva();
+});
+$("ant").onclick = () => vai(-1);
+$("prox").onclick = () => vai(1);
+$("pend").onclick = () => {
+  for (let k = 1; k <= ITENS.length; k++) { const j = (atual + k) % ITENS.length; if (!completo(ITENS[j].id)) { atual = j; salva(); mostra(); return; } }
+  $("aviso").textContent = "Todos respondidos. Exporte o CSV.";
+};
+document.addEventListener("keydown", (e) => {
+  if (e.target.tagName === "TEXTAREA") return;
+  const mapa = { "1": ["p1", "sim"], "2": ["p1", "nao"], "3": ["p1", "nao_sei"], "4": ["p2", "sim"], "5": ["p2", "nao"], "6": ["p2", "nao_sei"] };
+  if (mapa[e.key]) marca(...mapa[e.key]);
+  else if (e.key === "ArrowRight") vai(1);
+  else if (e.key === "ArrowLeft") vai(-1);
+});
+
+const campo = (s) => '"' + String(s || "").replace(/"/g, '""') + '"';
+$("exp").onclick = () => {
+  const linhas = ["id,p1,p2,comentario,quando"];
+  for (const it of ITENS) { const r = resp[it.id] || {}; linhas.push([it.id, r.p1 || "", r.p2 || "", campo(r.coment), r.quando || ""].join(",")); }
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob(["﻿" + linhas.join("\n")], { type: "text/csv;charset=utf-8" }));
+  a.download = "respostas_validacao.csv"; a.click();
+  $("aviso").textContent = "Exportado para a pasta Downloads.";
+};
+$("impbtn").onclick = () => $("imp").click();
+$("imp").onchange = async (e) => {
+  const f = e.target.files[0]; if (!f) return;
+  const texto = (await f.text()).replace(/^﻿/, "");
+  const re = /^(V\d+),([^,]*),([^,]*),("(?:[^"]|"")*"|[^,]*),(.*)$/;
+  let n = 0;
+  for (const l of texto.split(/\r?\n/).slice(1)) {
+    const m = l.match(re); if (!m) continue;
+    const c = m[4].startsWith('"') ? m[4].slice(1, -1).replace(/""/g, '"') : m[4];
+    resp[m[1]] = { p1: m[2] || undefined, p2: m[3] || undefined, coment: c, quando: m[5] || undefined }; n++;
+  }
+  salva(); mostra(); $("aviso").textContent = n + " respostas importadas.";
+};
+mostra();
+</script>
+</body>
+</html>

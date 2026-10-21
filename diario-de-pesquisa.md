@@ -27,6 +27,13 @@ Uma entrada por sessão de trabalho, a mais recente no topo. Anote o que fez, o 
 
 ## Entradas
 
+### 20/10/2026 — validação humana da régua (preparação)
+- **Fiz:** Registrei antes o protocolo da validação (`docs/piloto-premissas.md`, seção final): 100 trechos do OpenHands, 25 por combinação régua × citado no resumo, julgados às cegas (sem resumo, sem régua, sem as outras tentativas). Gerei a página de rotulagem (`scripts/validacao_amostra.py`) e a análise (`scripts/validacao_analisa.py`).
+- **Vi:** Um segundo erro de implementação no controle "posição relativa" (passava de 1 em 30% dos trechos). Com a conta certa, o resultado principal não muda (razão de chances 0,634 [0,556; 0,722]).
+- **Decidi:** A régua só é chamada de "decisão" no artigo se a validação passar (diferença ≥ 20 pontos e p < 0,05).
+- **Próximo passo:** Rotular os 100 trechos e rodar a análise.
+- **Atualização (mesmo dia):** Não tive tempo de rotular. Uma IA preencheu 35 trechos, então isso não vale como validação humana (registrado em `docs/piloto-premissas.md`). Pela regra registrada, a régua vai para o artigo como "discordância entre tentativas", com a validação humana como limitação e próximo passo. Vou propor ao orientador dividir a rotulagem.
+
 ### 17/10/2026 — teste confirmatório: "trecho silencioso" CONFIRMADO
 - **Fiz:** Registrei antes um teste confirmatório com uma única hipótese (H1: trecho não citado no resumo final → mais chance de ser ponto de decisão), critério de significância e de relevância (razão de chances ≤ 0,80). Rodei em dados novos: OpenHands + Qwen3-Coder (principal) e Cursor (suplementar).
 - **Vi (com números):** OpenHands, com 83.010 trechos de 4.119 tarefas: não citados 18,9% × citados 8,2%; razão de chances ajustada 0,634 [0,556; 0,723], p = 5e-12. CONFIRMADA. Vale para tarefas resolvidas e não resolvidas. No Cursor, 18,1% × 4,2%, mas não significativo (33 tarefas). Como fator de ordenação, porém, M quase não melhora o que o código já dá (AUC 0,716 → 0,718).

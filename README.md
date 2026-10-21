@@ -11,13 +11,13 @@ Todo sinal usado precisa passar num teste de durabilidade: *"isso continuaria va
 
 ## Resultado principal: o "trecho silencioso"
 
-> Trechos que o agente **não menciona no resumo final** são escolhas próprias dele (mudanças que a maioria das outras tentativas da mesma tarefa não fez) **2,3 vezes mais** do que os trechos mencionados.
+> Trechos que o agente **não menciona no resumo final** são pontos de decisão (mudanças que a maioria das outras tentativas da mesma tarefa não fez) **2,3 vezes mais** do que os trechos mencionados.
 
 Teste confirmatório com hipótese, dados e critério de decisão fixados antes da análise, em dados que não tinham sido usados: OpenHands + Qwen3-Coder-480B, 4.119 tarefas reais do GitHub, 25.838 patches, 83.010 trechos.
 
 | | Não citado no resumo | Citado | Razão de chances ajustada (IC 95%) |
 |---|---:|---:|---|
-| **Todos os trechos** | **18,9%** são pontos de decisão | **8,2%** | **0,634 [0,556; 0,723]**, p = 5 × 10⁻¹² |
+| **Todos os trechos** | **18,9%** são pontos de decisão | **8,2%** | **0,634 [0,556; 0,722]**, p = 5 × 10⁻¹² |
 | Tarefas resolvidas | 16,1% | 6,7% | — |
 | Tarefas não resolvidas | 20,9% | 9,4% | — |
 | Só patches com todos os trechos nomeados | 11,5% | 6,4% | 0,737 [0,628; 0,864] |
@@ -28,7 +28,7 @@ O mesmo padrão aparece em outros dois agentes: no Claude Code, piloto explorat�
 
 **Limites:**
 - Como ingrediente de uma ordenação que já usa as características do código, o ganho é pequeno (AUC 0,716 → 0,718). O valor prático mais claro é um **aviso explicável**: "o agente mexeu aqui e não te contou".
-- "Ponto de decisão" é uma aproximação, medida pela discordância entre tentativas. Ainda não é atenção medida com revisores humanos.
+- "Ponto de decisão" é uma aproximação, medida pela discordância entre tentativas. Ainda não é atenção medida com revisores humanos: a validação da régua com um avaliador humano está preparada (`scripts/validacao_*.py`), mas ainda não foi feita.
 
 ### Como chegamos aqui
 

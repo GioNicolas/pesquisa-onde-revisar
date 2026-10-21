@@ -59,13 +59,14 @@ def trechos_de_codigo(patch):
 def linhas_da_sessao(pid, iid, trechos, resumo, pedido):
     n_arquivos = len({t["arquivo"] for t in trechos})
     saida = []
-    for t in trechos:
+    for k, t in enumerate(trechos):
         nome = nome_do_trecho(t["contexto"], t["arquivo"])
         nomes = [nome] if nome else [Path(t["arquivo"]).stem]
         base_arq = Path(t["arquivo"]).name
         saida.append({
             "patch_id": pid, "instance_id": iid, "arquivo": t["arquivo"], "nome": nome,
-            "posicao": t["posicao"], "posicao_rel": t["posicao"] / max(1, len(trechos) - 1),
+            # posicao conta todos os hunks do patch; posicao_rel usa só os trechos de código (0 a 1)
+            "posicao": t["posicao"], "posicao_rel": k / max(1, len(trechos) - 1),
             "linhas_add": len(t["adicionadas"]), "linhas_rem": len(t["removidas"]),
             "tamanho": len(t["adicionadas"]) + len(t["removidas"]),
             "hunks_no_arquivo": t["hunks_no_arquivo"], "arquivos_no_patch": n_arquivos,
